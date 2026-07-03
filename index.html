@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TetherAsset | Multi-Chain Token</title>
+    <meta
+      name="description"
+      content="TetherAsset multi-chain token website with BNB Chain buy panel and Solana token details."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/ethers@6.13.1/dist/ethers.umd.min.js"
+      defer
+    ></script>
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <div class="bg-orb orb-one"></div>
+    <div class="bg-orb orb-two"></div>
+
+    <header class="site-header">
+      <div class="container nav-row">
+        <a class="brand" href="#top">
+          <span class="brand-mark">T</span>
+          <span class="brand-text">
+            <strong>TetherAsset</strong>
+            <small>AI-powered multi-chain ecosystem</small>
+          </span>
+        </a>
+
+        <nav class="nav-links">
+          <a href="#chains">Chains</a>
+          <a href="#buy">Buy</a>
+          <a href="#features">Features</a>
+          <a href="#faq">Guide</a>
+        </nav>
+
+        <button class="primary-button connect-wallet-trigger">
+          Connect wallet
+        </button>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="banner-section">
+        <div class="container">
+          <div class="top-banner-card">
+            <img
+              src="./assets/token-banner.jpg"
+              alt="TetherAsset token banner"
+              class="top-banner-image"
+            />
+            <div class="top-banner-overlay">
+              <p>Live token identity</p>
+              <strong>Multi-chain digital asset ecosystem</strong>
+              <span>Landscape banner placed below the menu bar</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="hero-section">
+        <div class="container hero-grid">
+          <div class="hero-copy-wrap">
+            <span class="eyebrow">Transparent • Secure • Decentralized</span>
+            <h1>
+              A premium one-page launch site for
+              <span class="accent-text">TetherAsset</span>
+            </h1>
+            <p class="hero-copy">
+              The site combines a polished token presentation, live BNB Chain
+              buy flow, and direct visibility for both the BSC and Solana token
+              addresses in one smooth page.
+            </p>
+
+            <div class="hero-badges">
+              <span class="pill">BNB Chain live buy</span>
+              <span class="pill">Solana address ready</span>
+              <span class="pill">Wallet extension + mobile</span>
+            </div>
+
+            <div class="hero-actions">
+              <a class="primary-button" href="#buy">Buy on BSC</a>
+              <a class="secondary-button" href="#chains">View addresses</a>
+            </div>
+
+            <div class="hero-stats">
+              <article class="stat-card">
+                <span>Primary BSC token</span>
+                <strong id="heroTokenSymbol">Loading...</strong>
+              </article>
+              <article class="stat-card">
+                <span>Payment assets</span>
+                <strong>BNB • USDT • WBNB • USDC</strong>
+              </article>
+              <article class="stat-card">
+                <span>Solana rollout</span>
+                <strong>Address published</strong>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="chains" class="section">
+        <div class="container">
+          <div class="section-heading">
+            <span class="eyebrow">Chain deployment</span>
+            <h2>Official token addresses</h2>
+            <p>
+              The BSC contract is wired into the buy module below. The Solana
+              address is highlighted here for listings, wallets, and community
+              sharing.
+            </p>
+          </div>
+
+          <div class="chain-grid">
+            <article class="chain-card featured-chain">
+              <div class="chain-top">
+                <div>
+                  <span class="chain-label">BNB Chain</span>
+                  <h3 id="bscTokenName">TetherAsset</h3>
+                </div>
+                <span class="network-badge bsc-badge">BEP20</span>
+              </div>
+              <p class="chain-copy">
+                This is the active contract used by the integrated swap panel.
+              </p>
+              <div class="address-box">
+                <code id="bscAddressText"></code>
+              </div>
+              <div class="card-actions">
+                <button
+                  class="secondary-button copy-button"
+                  data-copy="0xE6Be8911FbfCB2ab03Ab32B3fA84fE61D31b4444"
+                >
+                  Copy BSC address
+                </button>
+                <a
+                  class="link-button"
+                  href="https://bscscan.com/token/0xE6Be8911FbfCB2ab03Ab32B3fA84fE61D31b4444"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View on BscScan
+                </a>
+              </div>
+            </article>
+
+            <article class="chain-card">
+              <div class="chain-top">
+                <div>
+                  <span class="chain-label">Solana</span>
+                  <h3>TetherAsset Solana</h3>
+                </div>
+                <span class="network-badge sol-badge">SPL</span>
+              </div>
+              <p class="chain-copy">
+                Use this address for Solana token discovery, tracking, and
+                community access.
+              </p>
+              <div class="address-box">
+                <code id="solAddressText"></code>
+              </div>
+              <div class="card-actions">
+                <button
+                  class="secondary-button copy-button"
+                  data-copy="H8qwYSWapExD4tTyyMZUnGbdPw27WxwjdTXuRmNspump"
+                >
+                  Copy Solana address
+                </button>
+                <a
+                  class="link-button"
+                  href="https://solscan.io/token/H8qwYSWapExD4tTyyMZUnGbdPw27WxwjdTXuRmNspump"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View on Solscan
+                </a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="buy" class="section">
+        <div class="container buy-grid">
+          <div class="buy-copy-panel">
+            <span class="eyebrow">BNB Chain buy panel</span>
+            <h2>Buy directly from your wallet</h2>
+            <p>
+              Users can connect a wallet extension or a mobile wallet browser,
+              fetch a live PancakeSwap route, approve only when needed, and buy
+              the BSC token contract directly.
+            </p>
+
+            <div class="info-list">
+              <div class="info-item">
+                <strong>Target token</strong>
+                <span id="buyTokenSummary">Loading token info...</span>
+              </div>
+              <div class="info-item">
+                <strong>Routing</strong>
+                <span>PancakeSwap V2 with route detection</span>
+              </div>
+              <div class="info-item">
+                <strong>Supported wallets</strong>
+                <span>MetaMask, Trust Wallet browser, and compatible Web3 wallets</span>
+              </div>
+            </div>
+          </div>
+
+          <section class="buy-card">
+            <div class="buy-card-top">
+              <div>
+                <span class="chain-label">Buy widget</span>
+                <h3>Swap into TetherAsset</h3>
+              </div>
+              <span class="network-badge bsc-badge">BNB Chain</span>
+            </div>
+
+            <div class="wallet-strip">
+              <div>
+                <span class="mini-label">Wallet</span>
+                <strong id="walletAddress">Not connected</strong>
+              </div>
+              <button class="secondary-button small-button connect-wallet-trigger">
+                Connect
+              </button>
+            </div>
+
+            <div class="mini-token-card">
+              <span class="mini-label">Buying token</span>
+              <strong id="targetTokenDisplay">TetherAsset</strong>
+              <code id="targetTokenAddress"></code>
+            </div>
+
+            <label class="field">
+              <span>Pay with</span>
+              <select id="sourceToken"></select>
+            </label>
+
+            <div class="field-grid">
+              <label class="field">
+                <span>Amount to spend</span>
+                <input
+                  id="amountIn"
+                  type="number"
+                  min="0"
+                  step="any"
+                  placeholder="0.0"
+                  autocomplete="off"
+                />
+              </label>
+
+              <label class="field">
+                <span>Slippage %</span>
+                <input
+                  id="slippage"
+                  type="number"
+                  min="0.1"
+                  max="49"
+                  step="0.1"
+                  value="5"
+                  autocomplete="off"
+                />
+              </label>
+            </div>
+
+            <div class="quote-grid">
+              <div class="quote-box">
+                <span class="mini-label">Balance</span>
+                <strong id="sourceBalance">-</strong>
+              </div>
+              <div class="quote-box">
+                <span class="mini-label">Estimated receive</span>
+                <strong id="quoteOut">-</strong>
+              </div>
+              <div class="quote-box">
+                <span class="mini-label">Minimum receive</span>
+                <strong id="minimumOut">-</strong>
+              </div>
+            </div>
+
+            <div class="route-box">
+              <span class="mini-label">Best route</span>
+              <strong id="routeText">Connect a wallet and enter an amount.</strong>
+            </div>
+
+            <div class="card-actions stacked">
+              <button id="approveButton" class="secondary-button" disabled>
+                Approve token
+              </button>
+              <button id="swapButton" class="primary-button" disabled>
+                Buy now
+              </button>
+            </div>
+
+            <pre id="statusBox" class="status-box">Ready.</pre>
+          </section>
+        </div>
+      </section>
+
+      <section id="features" class="section">
+        <div class="container">
+          <div class="section-heading">
+            <span class="eyebrow">Why this page stands out</span>
+            <h2>Designed for launch, community, and conversion</h2>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature-card">
+              <h3>Branded visual identity</h3>
+              <p>
+                The page uses your supplied token artwork and a neon
+                multi-chain aesthetic to feel premium and memorable.
+              </p>
+            </article>
+            <article class="feature-card">
+              <h3>One-page conversion flow</h3>
+              <p>
+                Visitors can discover the story, verify the addresses, and buy
+                the BSC token without leaving the page.
+              </p>
+            </article>
+            <article class="feature-card">
+              <h3>Multi-chain presence</h3>
+              <p>
+                BSC is configured for direct wallet buying, while Solana is
+                highlighted for visibility and community reach.
+              </p>
+            </article>
+            <article class="feature-card">
+              <h3>Mobile friendly</h3>
+              <p>
+                The layout is responsive and works well in wallet browsers on
+                phones and tablets.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" class="section">
+        <div class="container guide-grid">
+          <div class="section-heading narrow">
+            <span class="eyebrow">Quick guide</span>
+            <h2>How users interact with the site</h2>
+          </div>
+
+          <div class="guide-card">
+            <span>1</span>
+            <h3>Open in a wallet</h3>
+            <p>
+              Desktop users can open it with a browser wallet extension.
+              Mobile users can open it inside a wallet browser.
+            </p>
+          </div>
+          <div class="guide-card">
+            <span>2</span>
+            <h3>Switch to BNB Chain</h3>
+            <p>
+              The dApp prompts the wallet to switch to BNB Chain before
+              trading.
+            </p>
+          </div>
+          <div class="guide-card">
+            <span>3</span>
+            <h3>Buy or copy addresses</h3>
+            <p>
+              Users can buy the BSC token immediately or copy either contract
+              address for sharing and tracking.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-row">
+        <div>
+          <strong>TetherAsset</strong>
+          <p>Multi-chain token landing page with direct BSC buy support.</p>
+        </div>
+        <div class="footer-links">
+          <a
+            href="https://bscscan.com/token/0xE6Be8911FbfCB2ab03Ab32B3fA84fE61D31b4444"
+            target="_blank"
+            rel="noreferrer"
+          >
+            BscScan
+          </a>
+          <a
+            href="https://solscan.io/token/H8qwYSWapExD4tTyyMZUnGbdPw27WxwjdTXuRmNspump"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Solscan
+          </a>
+        </div>
+        <small>© <span id="currentYear"></span> TetherAsset</small>
+      </div>
+    </footer>
+  </body>
+</html>

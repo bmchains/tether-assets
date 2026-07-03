@@ -1,0 +1,37 @@
+name: Deploy static site
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare deploy archive
+        run: |
+          mkdir -p deploy_bundle
+          cp index.html deploy_bundle/
+          cp styles.css deploy_bundle/
+          cp app.js deploy_bundle/
+          cp README.md deploy_bundle/
+          cp DEPLOY.md deploy_bundle/
+          mkdir -p deploy_bundle/assets
+          cp assets/token-banner.jpg deploy_bundle/assets/
+
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          source: "deploy_bundle/*"
+          target: ${{ secrets.DEPLOY_TARGET }}
+          strip_components: 1
