@@ -1,412 +1,446 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TetherAsset | Multi-Chain Token</title>
-    <meta
-      name="description"
-      content="TetherAsset multi-chain token website with BNB Chain buy panel and Solana token details."
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="./styles.css" />
-    <script
-      src="https://cdn.jsdelivr.net/npm/ethers@6.13.1/dist/ethers.umd.min.js"
-      defer
-    ></script>
-    <script src="./app.js" defer></script>
-  </head>
-  <body>
-    <div class="bg-orb orb-one"></div>
-    <div class="bg-orb orb-two"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TetherAsset | Multi-Chain Digital Asset Ecosystem</title>
+  <meta
+    name="description"
+    content="A premium redesigned landing page for TetherAsset with a stronger visual identity, clearer hierarchy, and immersive multi-chain storytelling."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="site-shell">
+    <div class="bg-grid"></div>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+    <div class="bg-orb orb-c"></div>
+    <div id="webgl-stage" aria-hidden="true"></div>
 
-    <header class="site-header">
-      <div class="container nav-row">
-        <a class="brand" href="#top">
-          <span class="brand-mark">T</span>
-          <span class="brand-text">
-            <strong>TetherAsset</strong>
-            <small>AI-powered multi-chain ecosystem</small>
-          </span>
-        </a>
+    <header class="topbar">
+      <a class="brand" href="#hero" aria-label="TetherAsset home">
+        <span class="brand-mark"></span>
+        <span class="brand-copy">
+          <strong>TetherAsset</strong>
+          <small>AI-Powered Multi-Chain Ecosystem</small>
+        </span>
+      </a>
 
-        <nav class="nav-links">
-          <a href="#chains">Chains</a>
-          <a href="#buy">Buy</a>
-          <a href="#features">Features</a>
-          <a href="#faq">Guide</a>
-        </nav>
+      <nav class="nav">
+        <a href="#ecosystem">Ecosystem</a>
+        <a href="#vision">Vision</a>
+        <a href="#contracts">Contracts</a>
+        <a href="#roadmap">Roadmap</a>
+      </nav>
 
-        <button class="primary-button connect-wallet-trigger">
-          Connect wallet
-        </button>
-      </div>
+      <a class="button button-ghost" href="https://t.me/TetherAssetnew" target="_blank" rel="noreferrer">
+        Join Community
+      </a>
     </header>
 
-    <main id="top">
-      <section class="banner-section">
-        <div class="container">
-          <div class="top-banner-card">
-            <img
-              src="./assets/token-banner.jpg"
-              alt="TetherAsset token banner"
-              class="top-banner-image"
-            />
-            <div class="top-banner-overlay">
-              <p>Live token identity</p>
-              <strong>Multi-chain digital asset ecosystem</strong>
-              <span>Landscape banner placed below the menu bar</span>
+    <main>
+      <section class="hero container" id="hero">
+        <div class="hero-copy reveal scroll-parallax" data-depth="0.14">
+          <div class="eyebrow">
+            <span class="pulse-dot"></span>
+            Now live on TRON, BNB Chain and Solana
+          </div>
+          <h1>The AI-powered gateway to digital assets, redesigned for trust and impact.</h1>
+          <p class="hero-text">
+            TetherAsset is building a coordinated multi-chain ecosystem across TRON, BNB Chain,
+            Solana and Ethereum, combining native community assets, planned interoperability layers,
+            and a future AI assistant that makes crypto feel understandable.
+          </p>
+
+          <div class="hero-actions">
+            <a class="button button-primary" href="#ecosystem">Explore Ecosystem</a>
+            <a class="button button-secondary" href="#vision">Read Our Vision</a>
+          </div>
+
+          <div class="hero-metrics">
+            <article>
+              <strong>3</strong>
+              <span>Networks live</span>
+            </article>
+            <article>
+              <strong>4</strong>
+              <span>Chains in roadmap</span>
+            </article>
+            <article>
+              <strong>AI</strong>
+              <span>Guided product vision</span>
+            </article>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal scroll-parallax" data-depth="0.22">
+          <div class="hero-3d-scene">
+            <div class="floating-coin coin-a" aria-hidden="true">
+              <span>TA</span>
             </div>
+            <div class="floating-coin coin-b" aria-hidden="true">
+              <span>UDST</span>
+            </div>
+            <div class="floating-coin coin-c" aria-hidden="true">
+              <span>GLUSD</span>
+            </div>
+          <div class="visual-card glass tilt-card" data-tilt>
+            <div class="visual-card-top">
+              <span class="status-pill">Concept Preview</span>
+              <span class="mini-label">AI Crypto Assistant</span>
+            </div>
+
+            <div class="holo-layer holo-layer-a" aria-hidden="true"></div>
+            <div class="holo-layer holo-layer-b" aria-hidden="true"></div>
+            <div class="scan-ring ring-a" aria-hidden="true"></div>
+            <div class="scan-ring ring-b" aria-hidden="true"></div>
+
+            <div class="chat-window">
+              <div class="message user">Send £50 to Mum.</div>
+              <div class="message ai">
+                I’ve prepared a secure transfer to your verified contact. Review the destination,
+                estimated network fee, and approve with biometric confirmation.
+              </div>
+              <div class="message user">Is this wallet address safe?</div>
+              <div class="message ai">
+                I scanned the address. No scam reports found, but I’ll still warn you if the
+                destination shows suspicious behavior before you sign.
+              </div>
+            </div>
+
+            <div class="network-rings">
+              <span>TRON</span>
+              <span>BNB</span>
+              <span>SOL</span>
+              <span>ETH</span>
+            </div>
+          </div>
           </div>
         </div>
       </section>
 
-      <section class="hero-section">
-        <div class="container hero-grid">
-          <div class="hero-copy-wrap">
-            <span class="eyebrow">Transparent • Secure • Decentralized</span>
-            <h1>
-              A premium one-page launch site for
-              <span class="accent-text">TetherAsset</span>
-            </h1>
-            <p class="hero-copy">
-              The site combines a polished token presentation, live BNB Chain
-              buy flow, and direct visibility for both the BSC and Solana token
-              addresses in one smooth page.
-            </p>
-
-            <div class="hero-badges">
-              <span class="pill">BNB Chain live buy</span>
-              <span class="pill">Solana address ready</span>
-              <span class="pill">Wallet extension + mobile</span>
-            </div>
-
-            <div class="hero-actions">
-              <a class="primary-button" href="#buy">Buy on BSC</a>
-              <a class="secondary-button" href="#chains">View addresses</a>
-            </div>
-
-            <div class="hero-stats">
-              <article class="stat-card">
-                <span>Primary BSC token</span>
-                <strong id="heroTokenSymbol">Loading...</strong>
-              </article>
-              <article class="stat-card">
-                <span>Payment assets</span>
-                <strong>BNB • USDT • WBNB • USDC</strong>
-              </article>
-              <article class="stat-card">
-                <span>Solana rollout</span>
-                <strong>Address published</strong>
-              </article>
-            </div>
-          </div>
+      <section class="ticker-wrap">
+        <div class="ticker-track">
+          <span>BTC $62,087 +0.55%</span>
+          <span>ETH $1,736 +2.16%</span>
+          <span>BNB $567.30 +1.14%</span>
+          <span>SOL $81.64 +1.00%</span>
+          <span>TRX $0.3204 +0.83%</span>
+          <span>USDT $0.9991 +0.00%</span>
+          <span>BTC $62,087 +0.55%</span>
+          <span>ETH $1,736 +2.16%</span>
+          <span>BNB $567.30 +1.14%</span>
+          <span>SOL $81.64 +1.00%</span>
+          <span>TRX $0.3204 +0.83%</span>
+          <span>USDT $0.9991 +0.00%</span>
         </div>
       </section>
 
-      <section id="chains" class="section">
-        <div class="container">
-          <div class="section-heading">
-            <span class="eyebrow">Chain deployment</span>
-            <h2>Official token addresses</h2>
-            <p>
-              The BSC contract is wired into the buy module below. The Solana
-              address is highlighted here for listings, wallets, and community
-              sharing.
-            </p>
-          </div>
+      <section class="container section scroll-parallax" id="ecosystem" data-depth="0.08">
+        <div class="section-heading reveal">
+          <span class="section-tag">Multi-chain ecosystem</span>
+          <h2>One brand, four networks, stronger visual clarity.</h2>
+          <p>
+            Each TetherAsset deployment is native to its own chain, with separate holders,
+            liquidity, and market behavior. UDST and GLUSD are framed here as planned
+            interoperability layers rather than current live bridge functionality.
+          </p>
+        </div>
 
-          <div class="chain-grid">
-            <article class="chain-card featured-chain">
-              <div class="chain-top">
-                <div>
-                  <span class="chain-label">BNB Chain</span>
-                  <h3 id="bscTokenName">TetherAsset</h3>
-                </div>
-                <span class="network-badge bsc-badge">BEP20</span>
-              </div>
-              <p class="chain-copy">
-                This is the active contract used by the integrated swap panel.
-              </p>
-              <div class="address-box">
-                <code id="bscAddressText"></code>
-              </div>
-              <div class="card-actions">
-                <button
-                  class="secondary-button copy-button"
-                  data-copy="0xE6Be8911FbfCB2ab03Ab32B3fA84fE61D31b4444"
-                >
-                  Copy BSC address
-                </button>
-                <a
-                  class="link-button"
-                  href="https://bscscan.com/token/0xE6Be8911FbfCB2ab03Ab32B3fA84fE61D31b4444"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  View on BscScan
-                </a>
-              </div>
-            </article>
+        <div class="ecosystem-grid">
+          <article class="chain-card glass reveal tilt-card" data-tilt>
+            <div class="chain-top">
+              <span class="chain-badge live">Live</span>
+              <h3>TRON</h3>
+            </div>
+            <p>Original ecosystem launch with native TetherAsset and UDST infrastructure.</p>
+            <ul>
+              <li>Native TetherAsset</li>
+              <li>Native UDST</li>
+              <li>Settlement foundation</li>
+            </ul>
+          </article>
 
-            <article class="chain-card">
-              <div class="chain-top">
-                <div>
-                  <span class="chain-label">Solana</span>
-                  <h3>TetherAsset Solana</h3>
-                </div>
-                <span class="network-badge sol-badge">SPL</span>
-              </div>
-              <p class="chain-copy">
-                Use this address for Solana token discovery, tracking, and
-                community access.
-              </p>
-              <div class="address-box">
-                <code id="solAddressText"></code>
-              </div>
-              <div class="card-actions">
-                <button
-                  class="secondary-button copy-button"
-                  data-copy="H8qwYSWapExD4tTyyMZUnGbdPw27WxwjdTXuRmNspump"
-                >
-                  Copy Solana address
-                </button>
-                <a
-                  class="link-button"
-                  href="https://solscan.io/token/H8qwYSWapExD4tTyyMZUnGbdPw27WxwjdTXuRmNspump"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  View on Solscan
-                </a>
-              </div>
-            </article>
-          </div>
+          <article class="chain-card glass reveal tilt-card" data-tilt>
+            <div class="chain-top">
+              <span class="chain-badge live">Live</span>
+              <h3>BNB Chain</h3>
+            </div>
+            <p>Liquidity expansion, broader access, and stronger exchange-facing growth.</p>
+            <ul>
+              <li>Native TetherAsset</li>
+              <li>Native UDST</li>
+              <li>DEX growth</li>
+            </ul>
+          </article>
+
+          <article class="chain-card glass reveal tilt-card" data-tilt>
+            <div class="chain-top">
+              <span class="chain-badge live">Live</span>
+              <h3>Solana</h3>
+            </div>
+            <p>Official Solana expansion with an independent native market and holder base.</p>
+            <ul>
+              <li>Native TetherAsset</li>
+              <li>SPL deployment</li>
+              <li>High-speed trading</li>
+            </ul>
+          </article>
+
+          <article class="chain-card glass reveal tilt-card" data-tilt>
+            <div class="chain-top">
+              <span class="chain-badge planned">Planned</span>
+              <h3>Ethereum</h3>
+            </div>
+            <p>Long-term maturity phase for DeFi connectivity and institutional expansion.</p>
+            <ul>
+              <li>Native TetherAsset</li>
+              <li>Native UDST</li>
+              <li>Future integrations</li>
+            </ul>
+          </article>
         </div>
       </section>
 
-      <section id="buy" class="section">
-        <div class="container buy-grid">
-          <div class="buy-copy-panel">
-            <span class="eyebrow">BNB Chain buy panel</span>
-            <h2>Buy directly from your wallet</h2>
+      <section class="container section section-split scroll-parallax" id="vision" data-depth="0.1">
+        <div class="section-heading reveal">
+          <span class="section-tag">Why it matters</span>
+          <h2>Crypto still feels too technical for everyday users.</h2>
+          <p>
+            Wallet addresses, gas fees, scams, seed phrases, and chain switching create friction.
+            The redesigned layout turns that message into a stronger narrative with cleaner content
+            grouping and a more product-led feel.
+          </p>
+        </div>
+
+        <div class="problem-solution">
+          <article class="panel glass reveal">
+            <h3>The problem</h3>
+            <div class="problem-list">
+              <span>Wallets and seed phrases</span>
+              <span>Gas fees and networks</span>
+              <span>Bridges and chain switching</span>
+              <span>Scams and risky transactions</span>
+              <span>Cashing out to bank accounts</span>
+              <span>Fear of expensive mistakes</span>
+            </div>
+          </article>
+
+          <article class="panel highlight reveal">
+            <h3>The solution</h3>
             <p>
-              Users can connect a wallet extension or a mobile wallet browser,
-              fetch a live PancakeSwap route, approve only when needed, and buy
-              the BSC token contract directly.
+              A guided digital asset experience shaped around AI assistance, clearer education,
+              safer transaction flows, and a friendlier interface for non-technical users.
             </p>
-
-            <div class="info-list">
-              <div class="info-item">
-                <strong>Target token</strong>
-                <span id="buyTokenSummary">Loading token info...</span>
-              </div>
-              <div class="info-item">
-                <strong>Routing</strong>
-                <span>PancakeSwap V2 with route detection</span>
-              </div>
-              <div class="info-item">
-                <strong>Supported wallets</strong>
-                <span>MetaMask, Trust Wallet browser, and compatible Web3 wallets</span>
-              </div>
+            <div class="command-list">
+              <span>“How do I receive crypto?”</span>
+              <span>“Which network has the lowest fees?”</span>
+              <span>“Move my TetherAsset to savings.”</span>
+              <span>“Convert my crypto to cash.”</span>
             </div>
-          </div>
-
-          <section class="buy-card">
-            <div class="buy-card-top">
-              <div>
-                <span class="chain-label">Buy widget</span>
-                <h3>Swap into TetherAsset</h3>
-              </div>
-              <span class="network-badge bsc-badge">BNB Chain</span>
-            </div>
-
-            <div class="wallet-strip">
-              <div>
-                <span class="mini-label">Wallet</span>
-                <strong id="walletAddress">Not connected</strong>
-              </div>
-              <button class="secondary-button small-button connect-wallet-trigger">
-                Connect
-              </button>
-            </div>
-
-            <div class="mini-token-card">
-              <span class="mini-label">Buying token</span>
-              <strong id="targetTokenDisplay">TetherAsset</strong>
-              <code id="targetTokenAddress"></code>
-            </div>
-
-            <label class="field">
-              <span>Pay with</span>
-              <select id="sourceToken"></select>
-            </label>
-
-            <div class="field-grid">
-              <label class="field">
-                <span>Amount to spend</span>
-                <input
-                  id="amountIn"
-                  type="number"
-                  min="0"
-                  step="any"
-                  placeholder="0.0"
-                  autocomplete="off"
-                />
-              </label>
-
-              <label class="field">
-                <span>Slippage %</span>
-                <input
-                  id="slippage"
-                  type="number"
-                  min="0.1"
-                  max="49"
-                  step="0.1"
-                  value="5"
-                  autocomplete="off"
-                />
-              </label>
-            </div>
-
-            <div class="quote-grid">
-              <div class="quote-box">
-                <span class="mini-label">Balance</span>
-                <strong id="sourceBalance">-</strong>
-              </div>
-              <div class="quote-box">
-                <span class="mini-label">Estimated receive</span>
-                <strong id="quoteOut">-</strong>
-              </div>
-              <div class="quote-box">
-                <span class="mini-label">Minimum receive</span>
-                <strong id="minimumOut">-</strong>
-              </div>
-            </div>
-
-            <div class="route-box">
-              <span class="mini-label">Best route</span>
-              <strong id="routeText">Connect a wallet and enter an amount.</strong>
-            </div>
-
-            <div class="card-actions stacked">
-              <button id="approveButton" class="secondary-button" disabled>
-                Approve token
-              </button>
-              <button id="swapButton" class="primary-button" disabled>
-                Buy now
-              </button>
-            </div>
-
-            <pre id="statusBox" class="status-box">Ready.</pre>
-          </section>
+          </article>
         </div>
       </section>
 
-      <section id="features" class="section">
-        <div class="container">
-          <div class="section-heading">
-            <span class="eyebrow">Why this page stands out</span>
-            <h2>Designed for launch, community, and conversion</h2>
-          </div>
+      <section class="container section scroll-parallax" data-depth="0.09">
+        <div class="section-heading reveal">
+          <span class="section-tag">Platform features</span>
+          <h2>A more graphical product story with stronger section design.</h2>
+          <p>
+            Instead of dense blocks, the page now uses premium cards, icon-style highlights, and
+            balanced spacing to make the roadmap and product direction feel more credible.
+          </p>
+        </div>
 
-          <div class="feature-grid">
-            <article class="feature-card">
-              <h3>Branded visual identity</h3>
-              <p>
-                The page uses your supplied token artwork and a neon
-                multi-chain aesthetic to feel premium and memorable.
-              </p>
-            </article>
-            <article class="feature-card">
-              <h3>One-page conversion flow</h3>
-              <p>
-                Visitors can discover the story, verify the addresses, and buy
-                the BSC token without leaving the page.
-              </p>
-            </article>
-            <article class="feature-card">
-              <h3>Multi-chain presence</h3>
-              <p>
-                BSC is configured for direct wallet buying, while Solana is
-                highlighted for visibility and community reach.
-              </p>
-            </article>
-            <article class="feature-card">
-              <h3>Mobile friendly</h3>
-              <p>
-                The layout is responsive and works well in wallet browsers on
-                phones and tablets.
-              </p>
-            </article>
-          </div>
+        <div class="feature-grid">
+          <article class="feature-card glass reveal tilt-card" data-tilt>
+            <div class="feature-icon">AI</div>
+            <h3>AI Crypto Assistant</h3>
+            <p>Conversational guidance for understanding, sending, receiving, and managing assets.</p>
+          </article>
+          <article class="feature-card glass reveal tilt-card" data-tilt>
+            <div class="feature-icon">WL</div>
+            <h3>Simple Wallet Experience</h3>
+            <p>Clean self-custody flows for beginners, families, and older users.</p>
+          </article>
+          <article class="feature-card glass reveal tilt-card" data-tilt>
+            <div class="feature-icon">SP</div>
+            <h3>Scam Protection</h3>
+            <p>AI-assisted warnings for suspicious addresses, risky tokens, and unusual activity.</p>
+          </article>
+          <article class="feature-card glass reveal tilt-card" data-tilt>
+            <div class="feature-icon">ED</div>
+            <h3>Education Hub</h3>
+            <p>Simple lessons on wallets, security, trading, networks, and digital finance basics.</p>
+          </article>
+          <article class="feature-card glass reveal tilt-card" data-tilt>
+            <div class="feature-icon">PM</div>
+            <h3>Payments & Card Integration</h3>
+            <p>Future support for smoother crypto-to-fiat experiences and merchant transactions.</p>
+          </article>
+          <article class="feature-card glass reveal tilt-card" data-tilt>
+            <div class="feature-icon">MC</div>
+            <h3>Multi-Chain Support</h3>
+            <p>Native deployments across multiple chains with planned ecosystem coordination.</p>
+          </article>
         </div>
       </section>
 
-      <section id="faq" class="section">
-        <div class="container guide-grid">
-          <div class="section-heading narrow">
-            <span class="eyebrow">Quick guide</span>
-            <h2>How users interact with the site</h2>
-          </div>
+      <section class="container section contracts-section scroll-parallax" id="contracts" data-depth="0.11">
+        <div class="section-heading reveal">
+          <span class="section-tag">Official contracts</span>
+          <h2>Verified addresses presented with cleaner UX.</h2>
+          <p>
+            Contract data remains prominent, but this redesign turns it into a readable trust layer
+            with copy actions and clear live labels.
+          </p>
+        </div>
 
-          <div class="guide-card">
-            <span>1</span>
-            <h3>Open in a wallet</h3>
+        <div class="contracts-grid">
+          <article class="contract-card glass reveal tilt-card" data-tilt>
+            <div class="contract-head">
+              <h3>TetherAsset TRON</h3>
+              <span class="chain-badge live">Verified</span>
+            </div>
+            <code>TL5ZiLhLBdFczRaeWH7ojikejWk3wjCc7o</code>
+            <div class="contract-actions">
+              <button class="copy-btn" data-copy="TL5ZiLhLBdFczRaeWH7ojikejWk3wjCc7o">Copy</button>
+              <a href="https://tronscan.org/#/contract/TL5ZiLhLBdFczRaeWH7ojikejWk3wjCc7o" target="_blank" rel="noreferrer">View</a>
+            </div>
+          </article>
+
+          <article class="contract-card glass reveal tilt-card" data-tilt>
+            <div class="contract-head">
+              <h3>TetherAsset BNB</h3>
+              <span class="chain-badge live">Verified</span>
+            </div>
+            <code>0xE6Be8911FbfCB2ab03Ab32B3fA84fE61D31b4444</code>
+            <div class="contract-actions">
+              <button class="copy-btn" data-copy="0xE6Be8911FbfCB2ab03Ab32B3fA84fE61D31b4444">Copy</button>
+              <a href="https://bscscan.com/token/0xE6Be8911FbfCB2ab03Ab32B3fA84fE61D31b4444" target="_blank" rel="noreferrer">View</a>
+            </div>
+          </article>
+
+          <article class="contract-card glass reveal tilt-card" data-tilt>
+            <div class="contract-head">
+              <h3>TetherAsset SOL</h3>
+              <span class="chain-badge live">Verified</span>
+            </div>
+            <code>H8qwYSWapExD4tTyyMZUnGbdPw27WxwjdTXuRmNspump</code>
+            <div class="contract-actions">
+              <button class="copy-btn" data-copy="H8qwYSWapExD4tTyyMZUnGbdPw27WxwjdTXuRmNspump">Copy</button>
+              <a href="https://solscan.io/token/H8qwYSWapExD4tTyyMZUnGbdPw27WxwjdTXuRmNspump" target="_blank" rel="noreferrer">View</a>
+            </div>
+          </article>
+
+          <article class="contract-card glass reveal tilt-card" data-tilt>
+            <div class="contract-head">
+              <h3>UDST TRON</h3>
+              <span class="chain-badge live">Verified</span>
+            </div>
+            <code>TPnQ6UidybDKq7id8pqtsbnWYxsu9yJj9j</code>
+            <div class="contract-actions">
+              <button class="copy-btn" data-copy="TPnQ6UidybDKq7id8pqtsbnWYxsu9yJj9j">Copy</button>
+              <a href="https://tronscan.org/#/contract/TPnQ6UidybDKq7id8pqtsbnWYxsu9yJj9j" target="_blank" rel="noreferrer">View</a>
+            </div>
+          </article>
+
+          <article class="contract-card glass reveal tilt-card" data-tilt>
+            <div class="contract-head">
+              <h3>GLUSD TRON</h3>
+              <span class="chain-badge live">Verified</span>
+            </div>
+            <code>TSPBcBLzYjwDX9vekzoWY96hDnij32GRdb</code>
+            <div class="contract-actions">
+              <button class="copy-btn" data-copy="TSPBcBLzYjwDX9vekzoWY96hDnij32GRdb">Copy</button>
+              <a href="https://tronscan.org/#/contract/TSPBcBLzYjwDX9vekzoWY96hDnij32GRdb" target="_blank" rel="noreferrer">View</a>
+            </div>
+          </article>
+
+          <article class="contract-card glass reveal tilt-card" data-tilt>
+            <div class="contract-head">
+              <h3>TAUSD TRON</h3>
+              <span class="chain-badge live">Verified</span>
+            </div>
+            <code>TN5xzS9tcTqFKqmgRf4bQnBmjMHhE4wFm7</code>
+            <div class="contract-actions">
+              <button class="copy-btn" data-copy="TN5xzS9tcTqFKqmgRf4bQnBmjMHhE4wFm7">Copy</button>
+              <a href="https://tronscan.org/#/contract/TN5xzS9tcTqFKqmgRf4bQnBmjMHhE4wFm7" target="_blank" rel="noreferrer">View</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="container section scroll-parallax" id="roadmap" data-depth="0.08">
+        <div class="section-heading reveal">
+          <span class="section-tag">Roadmap</span>
+          <h2>Future growth framed as a high-end product timeline.</h2>
+          <p>
+            The roadmap keeps the original direction but presents it with a cleaner milestone system
+            so users can understand current progress versus planned capabilities at a glance.
+          </p>
+        </div>
+
+        <div class="timeline">
+          <article class="timeline-item reveal">
+            <span class="timeline-phase">Phase 1</span>
+            <h3>Foundation</h3>
+            <p>TRON launch, website, investor portal, AI platform foundation, and BNB expansion.</p>
+          </article>
+          <article class="timeline-item reveal">
+            <span class="timeline-phase">Phase 2</span>
+            <h3>Multi-chain growth</h3>
+            <p>Listings, community growth, market expansion, and wider ecosystem reach.</p>
+          </article>
+          <article class="timeline-item reveal">
+            <span class="timeline-phase">Phase 3</span>
+            <h3>AI product suite</h3>
+            <p>Wallet companion, education hub, guided transactions, and scam protection layers.</p>
+          </article>
+          <article class="timeline-item reveal">
+            <span class="timeline-phase">Phase 4</span>
+            <h3>Payments</h3>
+            <p>Global payment infrastructure, card integrations, and merchant-facing tools.</p>
+          </article>
+          <article class="timeline-item reveal">
+            <span class="timeline-phase">Phase 5</span>
+            <h3>Institutional treasury</h3>
+            <p>Settlement tooling, treasury coordination, and a more advanced AI financial layer.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="container section cta-section scroll-parallax" data-depth="0.12">
+        <div class="cta-card reveal tilt-card" data-tilt>
+          <div>
+            <span class="section-tag">Launch-ready redesign</span>
+            <h2>A sharper, more graphical first impression for TetherAsset.</h2>
             <p>
-              Desktop users can open it with a browser wallet extension.
-              Mobile users can open it inside a wallet browser.
+              This version emphasizes visual trust, clearer messaging, and a stronger premium feel
+              while preserving the core ecosystem narrative from the live site.
             </p>
           </div>
-          <div class="guide-card">
-            <span>2</span>
-            <h3>Switch to BNB Chain</h3>
-            <p>
-              The dApp prompts the wallet to switch to BNB Chain before
-              trading.
-            </p>
-          </div>
-          <div class="guide-card">
-            <span>3</span>
-            <h3>Buy or copy addresses</h3>
-            <p>
-              Users can buy the BSC token immediately or copy either contract
-              address for sharing and tracking.
-            </p>
+          <div class="cta-actions">
+            <a class="button button-primary" href="https://t.me/TetherAssetnew" target="_blank" rel="noreferrer">
+              Join Community
+            </a>
+            <a class="button button-secondary" href="https://tetherasset.com/bnb-litepaper" target="_blank" rel="noreferrer">
+              Read Litepaper
+            </a>
           </div>
         </div>
       </section>
     </main>
+  </div>
 
-    <footer class="site-footer">
-      <div class="container footer-row">
-        <div>
-          <strong>TetherAsset</strong>
-          <p>Multi-chain token landing page with direct BSC buy support.</p>
-        </div>
-        <div class="footer-links">
-          <a
-            href="https://bscscan.com/token/0xE6Be8911FbfCB2ab03Ab32B3fA84fE61D31b4444"
-            target="_blank"
-            rel="noreferrer"
-          >
-            BscScan
-          </a>
-          <a
-            href="https://solscan.io/token/H8qwYSWapExD4tTyyMZUnGbdPw27WxwjdTXuRmNspump"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Solscan
-          </a>
-        </div>
-        <small>© <span id="currentYear"></span> TetherAsset</small>
-      </div>
-    </footer>
-  </body>
+  <div class="toast" id="toast" aria-live="polite"></div>
+  <script type="module" src="app.js"></script>
+</body>
 </html>

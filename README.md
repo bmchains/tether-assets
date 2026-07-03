@@ -1,6 +1,6 @@
-# TetherAsset One-Page Website
+# TetherAsset Matrix Landing Page
 
-One-page launch website for the token using your supplied visual style.
+Premium one-page landing site for TetherAsset with a matrix-inspired green visual system, cinematic motion, and a WebGL-driven 3D hero experience.
 
 ## Updated token addresses
 
@@ -10,9 +10,9 @@ One-page launch website for the token using your supplied visual style.
 ## Included
 
 - premium one-page landing design
-- token artwork integrated into the hero section
-- BNB Chain buy panel
-- BSC and Solana address cards with copy buttons
+- matrix green theme across the full interface
+- cinematic WebGL background and 3D token motion
+- verified contract cards with copy actions
 - responsive layout for desktop and mobile wallet browsers
 
 ## Files

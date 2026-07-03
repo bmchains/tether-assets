@@ -1,579 +1,353 @@
-const BSC_CHAIN_ID_HEX = "0x38";
-const BSC_CHAIN_ID_DEC = 56;
-const PANCAKE_ROUTER_V2 = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
-const WBNB_ADDRESS = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
-const TARGET_BSC_TOKEN = "0xE6Be8911FbfCB2ab03Ab32B3fA84fE61D31b4444";
-const TARGET_SOL_TOKEN = "H8qwYSWapExD4tTyyMZUnGbdPw27WxwjdTXuRmNspump";
-const DEADLINE_MINUTES = 20;
-
-const SOURCE_TOKENS = {
-  BNB: {
-    symbol: "BNB",
-    decimals: 18,
-    isNative: true,
-    address: null,
-  },
-  USDT: {
-    symbol: "USDT",
-    decimals: 18,
-    isNative: false,
-    address: "0x55d398326f99059fF775485246999027B3197955",
-  },
-  WBNB: {
-    symbol: "WBNB",
-    decimals: 18,
-    isNative: false,
-    address: WBNB_ADDRESS,
-  },
-  USDC: {
-    symbol: "USDC",
-    decimals: 18,
-    isNative: false,
-    address: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
-  },
-};
-
-const ERC20_ABI = [
-  "function name() view returns (string)",
-  "function symbol() view returns (string)",
-  "function decimals() view returns (uint8)",
-  "function balanceOf(address owner) view returns (uint256)",
-  "function allowance(address owner, address spender) view returns (uint256)",
-  "function approve(address spender, uint256 amount) returns (bool)",
-];
-
-const ROUTER_ABI = [
-  "function getAmountsOut(uint256 amountIn, address[] calldata path) view returns (uint256[] memory amounts)",
-  "function swapExactETHForTokensSupportingFeeOnTransferTokens(uint256 amountOutMin, address[] calldata path, address to, uint256 deadline) payable",
-  "function swapExactTokensForTokensSupportingFeeOnTransferTokens(uint256 amountIn, uint256 amountOutMin, address[] calldata path, address to, uint256 deadline)",
-];
+const revealNodes = document.querySelectorAll(".reveal");
+const copyButtons = document.querySelectorAll(".copy-btn");
+const tiltCards = document.querySelectorAll("[data-tilt]");
+const parallaxNodes = document.querySelectorAll(".scroll-parallax");
+const toast = document.getElementById("toast");
+const webglStage = document.getElementById("webgl-stage");
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const state = {
-  provider: null,
-  signer: null,
-  router: null,
-  account: null,
-  targetMetadata: {
-    symbol: "TetherAsset",
-    name: "TetherAsset",
-    decimals: 18,
+  scrollY: window.scrollY,
+  pointerX: 0,
+  pointerY: 0,
+};
+
+const revealObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        revealObserver.unobserve(entry.target);
+      }
+    });
   },
-  quote: null,
-};
+  { threshold: 0.16 }
+);
 
-const els = {
-  sourceToken: document.getElementById("sourceToken"),
-  amountIn: document.getElementById("amountIn"),
-  slippage: document.getElementById("slippage"),
-  sourceBalance: document.getElementById("sourceBalance"),
-  quoteOut: document.getElementById("quoteOut"),
-  minimumOut: document.getElementById("minimumOut"),
-  routeText: document.getElementById("routeText"),
-  approveButton: document.getElementById("approveButton"),
-  swapButton: document.getElementById("swapButton"),
-  walletAddress: document.getElementById("walletAddress"),
-  statusBox: document.getElementById("statusBox"),
-  currentYear: document.getElementById("currentYear"),
-  heroTokenSymbol: document.getElementById("heroTokenSymbol"),
-  bscTokenName: document.getElementById("bscTokenName"),
-  bscAddressText: document.getElementById("bscAddressText"),
-  solAddressText: document.getElementById("solAddressText"),
-  targetTokenDisplay: document.getElementById("targetTokenDisplay"),
-  targetTokenAddress: document.getElementById("targetTokenAddress"),
-  buyTokenSummary: document.getElementById("buyTokenSummary"),
-  connectWalletTriggers: Array.from(document.querySelectorAll(".connect-wallet-trigger")),
-  copyButtons: Array.from(document.querySelectorAll(".copy-button")),
-};
+revealNodes.forEach((node) => revealObserver.observe(node));
 
-function setStatus(message) {
-  els.statusBox.textContent = message;
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  window.clearTimeout(showToast.timeoutId);
+  showToast.timeoutId = window.setTimeout(() => {
+    toast.classList.remove("show");
+  }, 1800);
 }
 
-function shortenAddress(address) {
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
-}
+copyButtons.forEach((button) => {
+  button.addEventListener("click", async () => {
+    const value = button.getAttribute("data-copy");
 
-function formatAmount(value, decimals = 6) {
-  const numeric = Number(value);
-  if (!Number.isFinite(numeric)) {
-    return value;
-  }
-
-  return numeric.toLocaleString(undefined, {
-    maximumFractionDigits: decimals,
-  });
-}
-
-function selectedSource() {
-  return SOURCE_TOKENS[els.sourceToken.value];
-}
-
-function getSlippageBps() {
-  const slippage = Number(els.slippage.value || "5");
-  if (!Number.isFinite(slippage) || slippage <= 0 || slippage >= 50) {
-    throw new Error("Slippage must be between 0.1 and 49.");
-  }
-  return BigInt(Math.round(slippage * 100));
-}
-
-function calculateAmountOutMin(amountOut) {
-  return (amountOut * (10000n - getSlippageBps())) / 10000n;
-}
-
-function updateWalletUi() {
-  const text = state.account ? shortenAddress(state.account) : "Not connected";
-  els.walletAddress.textContent = text;
-  for (const trigger of els.connectWalletTriggers) {
-    trigger.textContent = state.account ? "Wallet connected" : "Connect wallet";
-  }
-}
-
-function renderStaticContent() {
-  els.currentYear.textContent = String(new Date().getFullYear());
-  els.bscAddressText.textContent = TARGET_BSC_TOKEN;
-  els.solAddressText.textContent = TARGET_SOL_TOKEN;
-  els.targetTokenAddress.textContent = TARGET_BSC_TOKEN;
-  els.heroTokenSymbol.textContent = state.targetMetadata.symbol;
-  els.bscTokenName.textContent = state.targetMetadata.name;
-  els.targetTokenDisplay.textContent = state.targetMetadata.name;
-  els.buyTokenSummary.textContent = `${state.targetMetadata.name} (${state.targetMetadata.symbol}) on BNB Chain`;
-}
-
-function populateSourceTokens() {
-  els.sourceToken.innerHTML = Object.keys(SOURCE_TOKENS)
-    .map((key) => `<option value="${key}">${SOURCE_TOKENS[key].symbol}</option>`)
-    .join("");
-  els.sourceToken.value = "BNB";
-}
-
-async function ensureProvider() {
-  if (!window.ethereum) {
-    throw new Error(
-      "No Web3 wallet found. Open this site in MetaMask, Trust Wallet browser, or another compatible wallet.",
-    );
-  }
-
-  if (!state.provider) {
-    state.provider = new ethers.BrowserProvider(window.ethereum);
-  }
-
-  return state.provider;
-}
-
-async function switchToBsc() {
-  try {
-    await window.ethereum.request({
-      method: "wallet_switchEthereumChain",
-      params: [{ chainId: BSC_CHAIN_ID_HEX }],
-    });
-  } catch (error) {
-    if (error.code !== 4902) {
-      throw error;
-    }
-
-    await window.ethereum.request({
-      method: "wallet_addEthereumChain",
-      params: [
-        {
-          chainId: BSC_CHAIN_ID_HEX,
-          chainName: "BNB Smart Chain",
-          nativeCurrency: {
-            name: "BNB",
-            symbol: "BNB",
-            decimals: 18,
-          },
-          rpcUrls: ["https://bsc-dataseed.binance.org/"],
-          blockExplorerUrls: ["https://bscscan.com"],
-        },
-      ],
-    });
-  }
-}
-
-async function fetchTargetMetadata() {
-  if (!window.ethereum) {
-    renderStaticContent();
-    return;
-  }
-
-  try {
-    const provider = await ensureProvider();
-    const token = new ethers.Contract(TARGET_BSC_TOKEN, ERC20_ABI, provider);
-    const [name, symbol, decimals] = await Promise.all([
-      token.name().catch(() => state.targetMetadata.name),
-      token.symbol().catch(() => state.targetMetadata.symbol),
-      token.decimals().catch(() => state.targetMetadata.decimals),
-    ]);
-
-    state.targetMetadata = {
-      name,
-      symbol,
-      decimals: Number(decimals),
-    };
-  } catch {
-    state.targetMetadata = {
-      name: "TetherAsset",
-      symbol: "TetherAsset",
-      decimals: 18,
-    };
-  }
-
-  renderStaticContent();
-}
-
-function buildCandidatePaths(source) {
-  const startingAddress = source.isNative ? WBNB_ADDRESS : source.address;
-  const bridges = [WBNB_ADDRESS, SOURCE_TOKENS.USDT.address, SOURCE_TOKENS.USDC.address];
-  const deduped = new Map();
-
-  const normalize = (parts) =>
-    parts.filter((value, index) => value && value !== parts[index - 1]);
-
-  const candidates = [
-    normalize([startingAddress, TARGET_BSC_TOKEN]),
-    ...bridges.map((bridge) => normalize([startingAddress, bridge, TARGET_BSC_TOKEN])),
-  ];
-
-  for (const path of candidates) {
-    if (path.length < 2) {
-      continue;
-    }
-    deduped.set(path.join(">"), path);
-  }
-
-  return [...deduped.values()];
-}
-
-async function connectWallet() {
-  const provider = await ensureProvider();
-  setStatus("Connecting wallet...");
-
-  const accounts = await provider.send("eth_requestAccounts", []);
-  if (!accounts.length) {
-    throw new Error("Wallet connection was rejected.");
-  }
-
-  const network = await provider.getNetwork();
-  if (Number(network.chainId) !== BSC_CHAIN_ID_DEC) {
-    setStatus("Switching to BNB Chain...");
-    await switchToBsc();
-  }
-
-  state.provider = new ethers.BrowserProvider(window.ethereum);
-  state.signer = await state.provider.getSigner();
-  state.account = await state.signer.getAddress();
-  state.router = new ethers.Contract(PANCAKE_ROUTER_V2, ROUTER_ABI, state.signer);
-
-  updateWalletUi();
-  await fetchTargetMetadata();
-  await refreshBalances();
-  await refreshQuote();
-  setStatus(`Connected: ${state.account}`);
-}
-
-async function refreshBalances() {
-  const source = selectedSource();
-  if (!state.account || !state.provider) {
-    els.sourceBalance.textContent = "-";
-    return;
-  }
-
-  if (source.isNative) {
-    const balance = await state.provider.getBalance(state.account);
-    els.sourceBalance.textContent = `${formatAmount(ethers.formatUnits(balance, 18))} BNB`;
-    return;
-  }
-
-  const token = new ethers.Contract(source.address, ERC20_ABI, state.provider);
-  const balance = await token.balanceOf(state.account);
-  els.sourceBalance.textContent = `${formatAmount(ethers.formatUnits(balance, source.decimals))} ${source.symbol}`;
-}
-
-async function findBestQuote(amountInRaw, source) {
-  if (!state.router) {
-    throw new Error("Connect wallet first.");
-  }
-
-  const paths = buildCandidatePaths(source);
-  let best = null;
-
-  for (const path of paths) {
     try {
-      const amounts = await state.router.getAmountsOut(amountInRaw, path);
-      const amountOut = amounts[amounts.length - 1];
-      if (!best || amountOut > best.amountOut) {
-        best = { path, amountOut };
-      }
+      await navigator.clipboard.writeText(value);
+      showToast("Contract copied");
     } catch {
-      continue;
+      showToast("Copy failed");
     }
-  }
+  });
+});
 
-  if (!best) {
-    throw new Error("No swap route found for this pair on PancakeSwap V2.");
-  }
-
-  return best;
-}
-
-function routeLabels(path) {
-  return path
-    .map((address) => {
-      if (address.toLowerCase() === WBNB_ADDRESS.toLowerCase()) {
-        return "WBNB";
-      }
-
-      const source = Object.values(SOURCE_TOKENS).find(
-        (item) => item.address && item.address.toLowerCase() === address.toLowerCase(),
-      );
-
-      if (source) {
-        return source.symbol;
-      }
-
-      if (address.toLowerCase() === TARGET_BSC_TOKEN.toLowerCase()) {
-        return state.targetMetadata.symbol;
-      }
-
-      return shortenAddress(address);
-    })
-    .join(" → ");
-}
-
-async function refreshQuote() {
-  try {
-    els.approveButton.disabled = true;
-    els.swapButton.disabled = true;
-    state.quote = null;
-
-    const amountText = els.amountIn.value.trim();
-    if (!amountText) {
-      els.quoteOut.textContent = "-";
-      els.minimumOut.textContent = "-";
-      els.routeText.textContent = "Connect a wallet and enter an amount.";
-      return;
-    }
-
-    const source = selectedSource();
-    const amountInRaw = ethers.parseUnits(amountText, source.decimals);
-    if (amountInRaw <= 0n) {
-      throw new Error("Amount must be greater than zero.");
-    }
-
-    if (!state.account || !state.router) {
-      els.routeText.textContent = "Connect wallet to fetch a live route.";
-      return;
-    }
-
-    setStatus("Fetching the best route and quote...");
-    const best = await findBestQuote(amountInRaw, source);
-    const amountOutMin = calculateAmountOutMin(best.amountOut);
-
-    state.quote = {
-      source,
-      amountInRaw,
-      amountOut: best.amountOut,
-      amountOutMin,
-      path: best.path,
-    };
-
-    els.quoteOut.textContent = `${formatAmount(
-      ethers.formatUnits(best.amountOut, state.targetMetadata.decimals),
-    )} ${state.targetMetadata.symbol}`;
-    els.minimumOut.textContent = `${formatAmount(
-      ethers.formatUnits(amountOutMin, state.targetMetadata.decimals),
-    )} ${state.targetMetadata.symbol}`;
-    els.routeText.textContent = routeLabels(best.path);
-
-    if (source.isNative) {
-      els.swapButton.disabled = false;
-      setStatus("Quote ready. You can buy now.");
-      return;
-    }
-
-    const token = new ethers.Contract(source.address, ERC20_ABI, state.provider);
-    const allowance = await token.allowance(state.account, PANCAKE_ROUTER_V2);
-    els.approveButton.disabled = allowance >= amountInRaw;
-    els.swapButton.disabled = allowance < amountInRaw;
-    setStatus(
-      allowance >= amountInRaw
-        ? "Quote ready. Approval already exists for this amount."
-        : `Quote ready. Approve ${source.symbol} before buying.`,
-    );
-  } catch (error) {
-    state.quote = null;
-    els.quoteOut.textContent = "-";
-    els.minimumOut.textContent = "-";
-    els.routeText.textContent = "Quote unavailable.";
-    setStatus(parseError(error));
-  }
-}
-
-async function approveSourceToken() {
-  if (!state.quote || state.quote.source.isNative) {
+function updateParallax() {
+  if (prefersReducedMotion) {
+    parallaxNodes.forEach((node) => {
+      node.style.transform = "";
+      node.style.opacity = "";
+    });
     return;
   }
 
-  const { source } = state.quote;
-  const token = new ethers.Contract(source.address, ERC20_ABI, state.signer);
-  setStatus(`Sending ${source.symbol} approval transaction...`);
-  const tx = await token.approve(PANCAKE_ROUTER_V2, ethers.MaxUint256);
-  setStatus(`Approval submitted: ${tx.hash}\nWaiting for confirmation...`);
-  await tx.wait();
-  setStatus(`Approval confirmed: ${tx.hash}`);
-  await refreshQuote();
+  const viewportHeight = window.innerHeight;
+
+  parallaxNodes.forEach((node) => {
+    const depth = Number(node.dataset.depth || 0.1);
+    const rect = node.getBoundingClientRect();
+    const offset = rect.top + rect.height / 2 - viewportHeight / 2;
+    const translate = -offset * depth * 0.16;
+    const visibility = Math.max(0.72, 1 - Math.abs(offset) / (viewportHeight * 3.2));
+
+    node.style.transform = `translate3d(0, ${translate}px, 0)`;
+    node.style.opacity = `${visibility}`;
+  });
 }
 
-async function executeSwap() {
-  if (!state.quote || !state.router || !state.account) {
-    throw new Error("A valid quote is required before swapping.");
+updateParallax();
+window.addEventListener(
+  "scroll",
+  () => {
+    state.scrollY = window.scrollY;
+    updateParallax();
+  },
+  { passive: true }
+);
+
+window.addEventListener(
+  "pointermove",
+  (event) => {
+    state.pointerX = event.clientX / window.innerWidth - 0.5;
+    state.pointerY = event.clientY / window.innerHeight - 0.5;
+  },
+  { passive: true }
+);
+
+if (!prefersReducedMotion) {
+  tiltCards.forEach((card) => {
+    card.addEventListener("pointermove", (event) => {
+      const rect = card.getBoundingClientRect();
+      const px = (event.clientX - rect.left) / rect.width;
+      const py = (event.clientY - rect.top) / rect.height;
+      const rotateY = (px - 0.5) * 14;
+      const rotateX = (0.5 - py) * 14;
+
+      card.style.setProperty("--mx", `${px * 100}%`);
+      card.style.setProperty("--my", `${py * 100}%`);
+      card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
+    });
+
+    card.addEventListener("pointerleave", () => {
+      card.style.transform = "";
+      card.style.removeProperty("--mx");
+      card.style.removeProperty("--my");
+    });
+  });
+}
+
+async function initWebGLScene() {
+  if (prefersReducedMotion || !webglStage) {
+    return;
   }
 
-  const deadline = Math.floor(Date.now() / 1000) + DEADLINE_MINUTES * 60;
-  const { source, amountInRaw, amountOutMin, path } = state.quote;
+  try {
+    const THREE = await import("https://unpkg.com/three@0.167.1/build/three.module.js");
 
-  if (source.isNative) {
-    setStatus("Sending BNB swap transaction...");
-    const tx = await state.router.swapExactETHForTokensSupportingFeeOnTransferTokens(
-      amountOutMin,
-      path,
-      state.account,
-      deadline,
-      { value: amountInRaw },
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance",
+    });
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    webglStage.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 200);
+    camera.position.set(0, 0, 12);
+
+    const ambientLight = new THREE.AmbientLight(0xcfffd8, 1.35);
+    scene.add(ambientLight);
+
+    const keyLight = new THREE.PointLight(0x59ff7c, 28, 60, 2);
+    keyLight.position.set(-4, 2, 8);
+    scene.add(keyLight);
+
+    const fillLight = new THREE.PointLight(0xa7ff5a, 22, 60, 2);
+    fillLight.position.set(5, -1, 7);
+    scene.add(fillLight);
+
+    const rimLight = new THREE.PointLight(0x1dcf4c, 18, 60, 2);
+    rimLight.position.set(0, 5, -2);
+    scene.add(rimLight);
+
+    const world = new THREE.Group();
+    scene.add(world);
+
+    const particleGeometry = new THREE.BufferGeometry();
+    const particleCount = 900;
+    const particlePositions = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount; i += 1) {
+      const i3 = i * 3;
+      particlePositions[i3] = (Math.random() - 0.5) * 22;
+      particlePositions[i3 + 1] = (Math.random() - 0.5) * 16;
+      particlePositions[i3 + 2] = (Math.random() - 0.5) * 18;
+    }
+
+    particleGeometry.setAttribute("position", new THREE.BufferAttribute(particlePositions, 3));
+    const particles = new THREE.Points(
+      particleGeometry,
+      new THREE.PointsMaterial({
+        color: 0x78ff8d,
+        size: 0.028,
+        transparent: true,
+        opacity: 0.72,
+      })
     );
-    setStatus(`Swap submitted: ${tx.hash}\nWaiting for confirmation...`);
-    await tx.wait();
-    setStatus(`Swap confirmed: ${tx.hash}`);
-  } else {
-    setStatus(`Swapping ${source.symbol} for ${state.targetMetadata.symbol}...`);
-    const tx =
-      await state.router.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-        amountInRaw,
-        amountOutMin,
-        path,
-        state.account,
-        deadline,
+    world.add(particles);
+
+    const ringMaterial = new THREE.MeshBasicMaterial({
+      color: 0x6cff8f,
+      transparent: true,
+      opacity: 0.15,
+      wireframe: true,
+    });
+
+    const ringA = new THREE.Mesh(new THREE.TorusGeometry(3.8, 0.05, 16, 180), ringMaterial);
+    ringA.rotation.x = Math.PI / 2.4;
+    ringA.position.set(0.8, 1.3, -4);
+    world.add(ringA);
+
+    const ringB = new THREE.Mesh(new THREE.TorusGeometry(2.1, 0.035, 16, 140), ringMaterial.clone());
+    ringB.material.color = new THREE.Color(0xb8ff61);
+    ringB.position.set(-2.6, -1.2, -2);
+    ringB.rotation.x = 0.6;
+    ringB.rotation.y = 0.4;
+    world.add(ringB);
+
+    function createCoin(label, color, accent) {
+      const group = new THREE.Group();
+
+      const edge = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.86, 0.86, 0.18, 64, 1, true),
+        new THREE.MeshStandardMaterial({
+          color,
+          metalness: 0.95,
+          roughness: 0.22,
+          emissive: accent,
+          emissiveIntensity: 0.15,
+        })
       );
-    setStatus(`Swap submitted: ${tx.hash}\nWaiting for confirmation...`);
-    await tx.wait();
-    setStatus(`Swap confirmed: ${tx.hash}`);
-  }
 
-  await refreshBalances();
-  await refreshQuote();
-}
+      const faceMaterial = new THREE.MeshStandardMaterial({
+        color: 0xeefff0,
+        metalness: 0.5,
+        roughness: 0.18,
+        emissive: accent,
+        emissiveIntensity: 0.12,
+      });
 
-function parseError(error) {
-  const raw =
-    error?.shortMessage ||
-    error?.reason ||
-    error?.info?.error?.message ||
-    error?.message ||
-    "Unknown error.";
+      const faceFront = new THREE.Mesh(new THREE.CylinderGeometry(0.86, 0.86, 0.04, 64), faceMaterial);
+      faceFront.position.z = 0.07;
 
-  if (typeof raw !== "string") {
-    return "Transaction failed.";
-  }
+      const faceBack = new THREE.Mesh(new THREE.CylinderGeometry(0.86, 0.86, 0.04, 64), faceMaterial);
+      faceBack.position.z = -0.07;
 
-  return raw.replace(/^execution reverted:?\s*/i, "").trim();
-}
+      const innerRing = new THREE.Mesh(
+        new THREE.TorusGeometry(0.58, 0.03, 16, 90),
+        new THREE.MeshStandardMaterial({
+          color: accent,
+          metalness: 0.8,
+          roughness: 0.28,
+          emissive: accent,
+          emissiveIntensity: 0.35,
+        })
+      );
+      innerRing.rotation.x = Math.PI / 2;
+      innerRing.position.z = 0.09;
 
-function debounce(fn, delay = 400) {
-  let timeoutId;
-  return (...args) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => fn(...args), delay);
-  };
-}
+      const labelCanvas = document.createElement("canvas");
+      labelCanvas.width = 512;
+      labelCanvas.height = 512;
+      const ctx = labelCanvas.getContext("2d");
+      ctx.clearRect(0, 0, 512, 512);
+      ctx.fillStyle = "#effff1";
+      ctx.beginPath();
+      ctx.arc(256, 256, 198, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#041006";
+      ctx.font = "bold 122px Inter, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(label, 256, 272);
 
-async function copyText(value) {
-  await navigator.clipboard.writeText(value);
-}
+      const labelTexture = new THREE.CanvasTexture(labelCanvas);
+      const labelSprite = new THREE.Sprite(
+        new THREE.SpriteMaterial({
+          map: labelTexture,
+          transparent: true,
+          opacity: 0.92,
+        })
+      );
+      labelSprite.scale.set(1.12, 1.12, 1);
+      labelSprite.position.z = 0.14;
 
-async function bootstrap() {
-  populateSourceTokens();
-  renderStaticContent();
-  updateWalletUi();
+      group.add(edge, faceFront, faceBack, innerRing, labelSprite);
+      return group;
+    }
 
-  if (!window.ethereum) {
-    setStatus(
-      "Design is ready. To use the BNB Chain buy panel, open this page in a Web3 wallet extension or mobile wallet browser.",
+    const coinA = createCoin("TA", 0x63ff7d, 0x17bf43);
+    coinA.position.set(-3.1, 1.5, 0.2);
+    world.add(coinA);
+
+    const coinB = createCoin("UD", 0x17bf43, 0xb8ff61);
+    coinB.scale.setScalar(0.92);
+    coinB.position.set(2.9, -0.2, -0.4);
+    world.add(coinB);
+
+    const coinC = createCoin("GL", 0x9cff66, 0x59ff7c);
+    coinC.scale.setScalar(0.74);
+    coinC.position.set(-0.5, -2.2, -1.1);
+    world.add(coinC);
+
+    const crystal = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.95, 0),
+      new THREE.MeshStandardMaterial({
+        color: 0x79ff99,
+        transparent: true,
+        opacity: 0.16,
+        metalness: 0.2,
+        roughness: 0.12,
+        emissive: 0x24d355,
+        emissiveIntensity: 0.2,
+      })
     );
-  } else {
-    await fetchTargetMetadata();
+    crystal.position.set(1.1, 1.1, -3.3);
+    world.add(crystal);
 
-    window.ethereum.on("accountsChanged", async (accounts) => {
-      state.account = accounts?.[0] || null;
-      if (!state.account) {
-        state.signer = null;
-        state.router = null;
-        updateWalletUi();
-        await refreshBalances();
-        await refreshQuote();
-        setStatus("Wallet disconnected.");
-        return;
-      }
+    const clock = new THREE.Clock();
 
-      state.provider = new ethers.BrowserProvider(window.ethereum);
-      state.signer = await state.provider.getSigner();
-      state.router = new ethers.Contract(PANCAKE_ROUTER_V2, ROUTER_ABI, state.signer);
-      updateWalletUi();
-      await refreshBalances();
-      await refreshQuote();
-    });
-
-    window.ethereum.on("chainChanged", () => {
-      window.location.reload();
-    });
-
-    setStatus("Ready. Connect a wallet to buy on BNB Chain.");
-  }
-
-  for (const trigger of els.connectWalletTriggers) {
-    trigger.addEventListener("click", async () => {
-      try {
-        await connectWallet();
-      } catch (error) {
-        setStatus(parseError(error));
-      }
-    });
-  }
-
-  const debouncedRefresh = debounce(async () => {
-    await refreshBalances();
-    await refreshQuote();
-  });
-
-  els.sourceToken.addEventListener("change", debouncedRefresh);
-  els.amountIn.addEventListener("input", debouncedRefresh);
-  els.slippage.addEventListener("input", debouncedRefresh);
-
-  els.approveButton.addEventListener("click", async () => {
-    try {
-      await approveSourceToken();
-    } catch (error) {
-      setStatus(parseError(error));
+    function resize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
     }
-  });
 
-  els.swapButton.addEventListener("click", async () => {
-    try {
-      await executeSwap();
-    } catch (error) {
-      setStatus(parseError(error));
+    window.addEventListener("resize", resize);
+
+    function animate() {
+      const elapsed = clock.getElapsedTime();
+      const scrollProgress = Math.min(state.scrollY / Math.max(document.body.scrollHeight - window.innerHeight, 1), 1);
+
+      particles.rotation.y = elapsed * 0.025;
+      particles.rotation.x = elapsed * 0.015;
+
+      ringA.rotation.z = elapsed * 0.12;
+      ringB.rotation.z = -elapsed * 0.18;
+
+      coinA.rotation.y = elapsed * 0.55 + scrollProgress * 1.4;
+      coinA.rotation.x = Math.sin(elapsed * 0.8) * 0.2;
+      coinA.position.y = 1.5 + Math.sin(elapsed * 1.2) * 0.18;
+
+      coinB.rotation.y = -elapsed * 0.62 - scrollProgress * 1.1;
+      coinB.rotation.x = Math.cos(elapsed * 0.9) * 0.16;
+      coinB.position.y = -0.2 + Math.cos(elapsed * 1.1) * 0.24;
+
+      coinC.rotation.y = elapsed * 0.7 + scrollProgress * 0.9;
+      coinC.rotation.z = Math.sin(elapsed * 1.3) * 0.12;
+      coinC.position.x = -0.5 + Math.cos(elapsed * 0.8) * 0.2;
+
+      crystal.rotation.x = elapsed * 0.35;
+      crystal.rotation.y = -elapsed * 0.28;
+
+      world.rotation.y += (state.pointerX * 0.45 - world.rotation.y) * 0.04;
+      world.rotation.x += (-state.pointerY * 0.28 - world.rotation.x) * 0.04;
+      world.position.y += ((-scrollProgress * 1.6) - world.position.y) * 0.05;
+      world.position.x += (state.pointerX * 0.8 - world.position.x) * 0.035;
+
+      camera.position.z = 12 - scrollProgress * 2.4;
+      camera.position.y = -scrollProgress * 0.8;
+      camera.lookAt(0, 0, 0);
+
+      renderer.render(scene, camera);
+      window.requestAnimationFrame(animate);
     }
-  });
 
-  for (const button of els.copyButtons) {
-    button.addEventListener("click", async () => {
-      try {
-        await copyText(button.dataset.copy || "");
-        setStatus("Address copied to clipboard.");
-      } catch {
-        setStatus("Could not copy automatically. Please copy the address manually.");
-      }
-    });
+    animate();
+  } catch (error) {
+    console.error("Three.js scene failed to initialize", error);
   }
 }
 
-bootstrap();
+initWebGLScene();
